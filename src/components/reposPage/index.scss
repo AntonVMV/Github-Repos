@@ -1,0 +1,65 @@
+.repos__wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 20px;
+  padding-top: 20px;
+}
+
+.repos__list {
+  list-style: none;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 20px 10px;
+  border-radius: 20px;
+  overflow: hidden;
+  align-content: space-between;
+  row-gap: 10px;
+  box-shadow: 0 7px 8px 1px rgb(211, 211, 211);
+  transition: 0.3s ease;
+  &.clickable {
+    cursor: pointer;
+    &:hover {
+      box-shadow: 0 1px 1px 1px rgb(211, 211, 211);
+    }
+  }
+}
+
+.repos__avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+}
+
+.repos__name {
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.repos__login {
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.repos__starcount {
+  font-size: 18px;
+  font-weight: 500;
+  display: flex;
+  gap: 5px;
+  &::before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 20px;
+    background: url("../../../public/img/star.png") center center no-repeat;
+    background-size: cover;
+  }
+}

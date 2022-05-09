@@ -1,0 +1,30 @@
+.button {
+  background-color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  &.primary {
+    background-color: rgb(127, 105, 255);
+    color: white;
+    &:hover {
+      background-color: rgb(113, 88, 255);
+    }
+    &:active {
+      background-color: rgb(92, 64, 252);
+    }
+  }
+
+  &.secondary {
+    background-color: rgb(255, 105, 105);
+    color: white;
+    &:hover {
+      background-color: rgb(253, 85, 85);
+    }
+    &:active {
+      background-color: rgb(224, 62, 62);
+    }
+  }
+}

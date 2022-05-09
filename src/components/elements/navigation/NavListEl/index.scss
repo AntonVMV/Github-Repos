@@ -1,0 +1,45 @@
+.nav-link {
+  text-decoration: none;
+  color: black;
+  display: block;
+}
+
+.main__nav {
+  .nav-link {
+    padding: 10px;
+    border-radius: 5px;
+    transition: 0.3s ease;
+    &:hover {
+      background-color: rgb(221, 225, 255);
+    }
+    &.active {
+      background-color: rgb(151, 165, 255);
+    }
+  }
+}
+
+.repos-nav {
+  .nav-link {
+    &::after {
+      content: "";
+      display: block;
+      width: 0%;
+      height: 4px;
+
+      border-radius: 5px;
+      transition: 0.3s ease;
+    }
+    &:hover {
+      &::after {
+        width: 100%;
+        background-color: rgb(221, 225, 255);
+      }
+    }
+    &.active {
+      &::after {
+        width: 100%;
+        background-color: rgb(151, 165, 255);
+      }
+    }
+  }
+}

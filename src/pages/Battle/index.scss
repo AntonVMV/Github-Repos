@@ -1,0 +1,26 @@
+.battle-page {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 40px;
+  justify-items: center;
+}
+
+.battle-page__title {
+  grid-column: 1 / -1;
+  justify-content: space-between;
+}
+
+.battle-page__link {
+  grid-column: 1 / -1;
+}
+
+.results-page__draw {
+  display: flex;
+  gap: 30px;
+}
+
+@media screen and (max-width: 600px) {
+  .battle-page {
+    gap: 10px 10px;
+  }
+}

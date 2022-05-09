@@ -1,0 +1,23 @@
+.nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.main__nav {
+  font-weight: 500;
+  margin-bottom: 20px;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  font-size: 32px;
+  text-align: center;
+}
+
+.repos-nav {
+  display: flex;
+  margin: 15px 0;
+  font-size: 22px;
+  column-gap: 15px;
+  flex-wrap: wrap;
+}
