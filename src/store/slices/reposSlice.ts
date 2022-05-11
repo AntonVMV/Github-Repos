@@ -1,23 +1,24 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Thunk
 
-export const reposFetch = createAsyncThunk(
-  "repos/reposFetch",
-  async (language: string, thunkApi) => {
-    try {
-      const { data } = await axios.get(
-        `https://api.github.com/search/repositories?q=stars:>1+language:${language}&sort=stars&order=desc&type=Repositories`
-      );
-      return data;
-    } catch (error) {
-      return thunkApi.rejectWithValue(
-        error instanceof Error ? error.message : "unknown"
-      );
-    }
+export const reposFetch = createAsyncThunk<
+  IReposData,
+  string,
+  { rejectValue: string }
+>("repos/reposFetch", async (language: string, thunkApi) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.github.com/search/repositories?q=stars:>1+language:${language}&sort=stars&order=desc&type=Repositories`
+    );
+    return data;
+  } catch (error) {
+    return thunkApi.rejectWithValue(
+      error instanceof Error ? error.message : "unknown"
+    );
   }
-);
+});
 
 //Store
 interface IReposData {
@@ -42,19 +43,25 @@ export const reposSlice = createSlice({
   name: "repos",
   initialState,
   reducers: {},
-  extraReducers: {
-    [reposFetch.pending.type]: (state) => {
-      state.loading = true;
-    },
-    [reposFetch.fulfilled.type]: (state, action: PayloadAction<IReposData>) => {
-      state.loading = false;
-      state.error = null;
-      state.data = action.payload;
-    },
-    [reposFetch.rejected.type]: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(reposFetch.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(reposFetch.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.data = action.payload;
+      })
+      .addCase(reposFetch.rejected, (state, action) => {
+        state.loading = false;
+        if (action.payload) {
+          state.error = action.payload;
+        } else {
+          state.error = "Unknown Error";
+        }
+      });
   },
 });
 

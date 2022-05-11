@@ -1,45 +1,26 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-//Thunk
-
-type Player = "playerOne" | "playerTwo";
-
 interface UserObj {
   player: Player;
   name: string;
 }
 
-export const playerFetch = createAsyncThunk(
-  "players/playerFetch",
-  async (user: UserObj, thunkApi) => {
-    thunkApi.dispatch(setLoading(user.player));
-    try {
-      // const result = await axios.get(
-      //   `https://api.github.com/users/${user.name}`
-      // );
-      const result = await axios.all([
-        axios.get(`https://api.github.com/users/${user.name}`),
-        axios.get(`https://api.github.com/users/${user.name}/repos`),
-      ]);
+interface PlayerFetchData {
+  player: Player;
+  data: IPlayerData;
+  repos: any[];
+}
 
-      console.log(result);
+interface PlayerFetchError {
+  player: Player;
+  error: string;
+}
 
-      return {
-        player: user.player,
-        data: result[0].data,
-        repos: result[1].data,
-      };
-    } catch (error) {
-      return thunkApi.rejectWithValue({
-        player: user.player,
-        error: error instanceof Error ? error.message : "Unknown Error",
-      });
-    }
-  }
-);
-
-//Slice
+interface IPlayersState {
+  playerOne: IPlayer;
+  playerTwo: IPlayer;
+}
 
 export interface IPlayerData {
   id: number;
@@ -60,10 +41,36 @@ export interface IPlayer {
   error: null | string;
 }
 
-interface IPlayersState {
-  playerOne: IPlayer;
-  playerTwo: IPlayer;
-}
+//Thunk
+
+type Player = "playerOne" | "playerTwo";
+
+export const playerFetch = createAsyncThunk<
+  PlayerFetchData,
+  UserObj,
+  { rejectValue: PlayerFetchError }
+>("players/playerFetch", async (user: UserObj, thunkApi) => {
+  thunkApi.dispatch(setLoading(user.player));
+  try {
+    const result = await axios.all([
+      axios.get(`https://api.github.com/users/${user.name}`),
+      axios.get(`https://api.github.com/users/${user.name}/repos`),
+    ]);
+
+    return {
+      player: user.player,
+      data: result[0].data,
+      repos: result[1].data,
+    };
+  } catch (error) {
+    return thunkApi.rejectWithValue({
+      player: user.player,
+      error: error instanceof Error ? error.message : "Unknown Error",
+    });
+  }
+});
+
+//Slice
 
 const initialState: IPlayersState = {
   playerOne: {
@@ -92,26 +99,23 @@ export const playerSlice = createSlice({
       state[action.payload].error = null;
     },
   },
-  extraReducers: {
-    [playerFetch.fulfilled.type]: (
-      state,
-      action: PayloadAction<{ player: Player; data: IPlayerData; repos: any[] }>
-    ) => {
-      const player = action.payload.player;
-      state[player].data = action.payload.data;
-      state[player].repos = action.payload.repos;
-      state[player].loading = false;
-      state[player].error = null;
-    },
-    [playerFetch.rejected.type]: (
-      state,
-      action: PayloadAction<{ player: Player; error: string }>
-    ) => {
-      const player = action.payload.player;
-      state[player].data = null;
-      state[player].loading = false;
-      state[player].error = action.payload.error;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(playerFetch.fulfilled, (state, action) => {
+        const player = action.payload.player;
+        state[player].data = action.payload.data;
+        state[player].repos = action.payload.repos;
+        state[player].loading = false;
+        state[player].error = null;
+      })
+      .addCase(playerFetch.rejected, (state, action) => {
+        if (action.payload) {
+          const player = action.payload.player;
+          state[player].data = null;
+          state[player].loading = false;
+          state[player].error = action.payload.error;
+        }
+      });
   },
 });
 
